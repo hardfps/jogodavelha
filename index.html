@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VELHA// duelo online</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --bg: #0b0e14;
+    --panel: #12161f;
+    --line: #232838;
+    --x-color: #ff5d5d;
+    --o-color: #4dd4ff;
+    --accent: #f4c542;
+    --text: #e8eaf0;
+    --text-dim: #6b7280;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  body{
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(255,93,93,0.06), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(77,212,255,0.06), transparent 40%);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 24px;
+  }
+
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  .app{
+    width:100%;
+    max-width: 440px;
+  }
+
+  .brand{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom: 28px;
+  }
+  .brand h1{
+    font-size: 22px;
+    letter-spacing: 0.5px;
+    font-weight:700;
+  }
+  .brand h1 span{ color: var(--x-color); }
+  .brand small{
+    font-family:'JetBrains Mono', monospace;
+    color: var(--text-dim);
+    font-size: 11px;
+  }
+
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 28px;
+  }
+
+  /* ---------- LOBBY ---------- */
+  .lobby-tabs{
+    display:flex;
+    gap:4px;
+    background: var(--bg);
+    border:1px solid var(--line);
+    border-radius: 10px;
+    padding:4px;
+    margin-bottom:22px;
+  }
+  .lobby-tabs button{
+    flex:1;
+    padding:9px 0;
+    border:none;
+    border-radius:7px;
+    background:transparent;
+    color: var(--text-dim);
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+    transition: all .15s;
+  }
+  .lobby-tabs button.active{
+    background: var(--line);
+    color: var(--text);
+  }
+
+  label{
+    display:block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    font-family:'JetBrains Mono', monospace;
+  }
+
+  input[type=text]{
+    width:100%;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 13px 14px;
+    color: var(--text);
+    font-family:'JetBrains Mono', monospace;
+    font-size: 16px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    outline:none;
+    transition: border-color .15s;
+  }
+  input[type=text]:focus{ border-color: var(--accent); }
+
+  .btn{
+    width:100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: none;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 16px;
+    transition: transform .1s, opacity .15s;
+  }
+  .btn:active{ transform: scale(0.98); }
+  .btn-primary{ background: var(--accent); color: #14150f; }
+  .btn-primary:hover{ opacity: .9; }
+  .btn-ghost{
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--text-dim);
+  }
+  .btn-ghost:hover{ color: var(--text); border-color: var(--text-dim); }
+  .btn:disabled{ opacity:.4; cursor:not-allowed; }
+
+  .hint{
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+
+  .error{
+    color: var(--x-color);
+    font-size: 12px;
+    margin-top: 10px;
+    font-family:'JetBrains Mono', monospace;
+    display:none;
+  }
+
+  /* ---------- GAME ---------- */
+  .hidden{ display:none !important; }
+
+  .room-code-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background: var(--bg);
+    border:1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 20px;
+  }
+  .room-code-row .code{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 18px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .room-code-row button{
+    background: var(--line);
+    border:none;
+    color: var(--text);
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor:pointer;
+    font-family:'JetBrains Mono', monospace;
+  }
+
+  .status-bar{
+    text-align:center;
+    margin-bottom: 20px;
+    min-height: 44px;
+  }
+  .status-bar .status-text{
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .status-bar .you-are{
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family:'JetBrains Mono', monospace;
+    margin-top: 4px;
+  }
+  .turn-x{ color: var(--x-color); }
+  .turn-o{ color: var(--o-color); }
+
+  .board{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    aspect-ratio: 1;
+  }
+  .cell{
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Space Grotesk', sans-serif;
+    font-size: 42px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  .cell:hover:not(.filled){
+    border-color: var(--text-dim);
+  }
+  .cell.filled{ cursor: default; }
+  .cell.x{ color: var(--x-color); }
+  .cell.o{ color: var(--o-color); }
+  .cell.win{
+    background: rgba(244,197,66,0.1);
+    border-color: var(--accent);
+  }
+  .cell.pop{ animation: pop .18s ease-out; }
+  @keyframes pop{ from{ transform: scale(0.5); opacity:0; } to{ transform: scale(1); opacity:1; } }
+
+  .actions{
+    display:flex;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .actions .btn{ margin-top:0; }
+
+  .waiting-dots::after{
+    content: '';
+    animation: dots 1.4s infinite;
+  }
+  @keyframes dots{
+    0%{ content: ''; } 25%{ content: '.'; } 50%{ content: '..'; } 75%{ content: '...'; }
+  }
+
+  footer{
+    text-align:center;
+    margin-top: 18px;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-family:'JetBrains Mono', monospace;
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="brand">
+    <h1>VELHA<span>//</span>duelo</h1>
+    <small class="mono">1v1 online</small>
+  </div>
+
+  <!-- LOBBY -->
+  <div class="panel" id="lobby">
+    <div class="lobby-tabs">
+      <button class="active" id="tab-create">criar sala</button>
+      <button id="tab-join">entrar em sala</button>
+    </div>
+
+    <div id="view-create">
+      <label>seu nome (opcional)</label>
+      <input type="text" id="name-create" placeholder="jogador 1" maxlength="12" style="text-transform:none;letter-spacing:normal;">
+      <button class="btn btn-primary" id="btn-create">criar sala</button>
+      <p class="hint">Você joga com X. Depois de criar, manda o código pro seu adversário entrar.</p>
+    </div>
+
+    <div id="view-join" class="hidden">
+      <label>código da sala</label>
+      <input type="text" id="code-join" placeholder="EX: A3F9" maxlength="4">
+      <label style="margin-top:14px;">seu nome (opcional)</label>
+      <input type="text" id="name-join" placeholder="jogador 2" maxlength="12" style="text-transform:none;letter-spacing:normal;">
+      <button class="btn btn-primary" id="btn-join">entrar</button>
+      <p class="hint">Você joga com O. Peça o código pra quem criou a sala.</p>
+    </div>
+
+    <p class="error" id="lobby-error"></p>
+  </div>
+
+  <!-- GAME -->
+  <div class="panel hidden" id="game">
+    <div class="room-code-row">
+      <div>
+        <span class="mono" style="font-size:10px;color:var(--text-dim);">SALA</span>
+        <div class="code" id="room-code-display">----</div>
+      </div>
+      <button id="btn-copy">copiar código</button>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-text" id="status-text">conectando<span class="waiting-dots"></span></div>
+      <div class="you-are" id="you-are"></div>
+    </div>
+
+    <div class="board" id="board"></div>
+
+    <div class="actions">
+      <button class="btn btn-ghost" id="btn-rematch">jogar de novo</button>
+      <button class="btn btn-ghost" id="btn-leave">sair da sala</button>
+    </div>
+  </div>
+
+  <footer>feito pra rodar na vercel · dados via firebase realtime db</footer>
+</div>
+
+<!-- Firebase SDK (compat, sem build step) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script src="firebase-config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
